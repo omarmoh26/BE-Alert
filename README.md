@@ -1,4 +1,4 @@
-# BE-Alert
+# BE-Alert "Automatic Detection of Drowsy or Distracted Drive based on Brain Computer interface (BCI)."
 Driving is one of the activities that require concentration in daily life. Many road crashes are claimed
 to have a driver’s exhaustion, drowsiness, inattention, or distraction as a major contributing factor. An
 electroencephalogram (EEG) is the recording of brain electrical activity using electrodes that are placed
