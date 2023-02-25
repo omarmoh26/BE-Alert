@@ -8,6 +8,7 @@ from telnetlib import Telnet
 from threading import Thread
 import pandas as pd
 import time
+import recordingCSV
 
 start=time.process_time();
 class PyNeuro:
@@ -110,7 +111,7 @@ class PyNeuro:
 
     def __packetParser(self):
         try:
-            while time.process_time() - start < 15:
+            while time.process_time() - start < 1.1:
 
                 line = self.__telnet.read_until(b'\r');
                 if len(line) > 20:
@@ -168,10 +169,13 @@ class PyNeuro:
             # print(self.__attention_records)
             # print(self.__delta_records)
             # print(self.__theta_records)
-            df = pd.DataFrame({"attention" : self.__attention_records, "meditation" : self.__meditation_records,"delta" : self.__delta_records, "theta" : self.__theta_records
-                               , "lowAlpha" : self.__lowAlpha_records, "highAlpha" : self.__highAlpha_records, "lowBeta" : self.__lowBeta_records,
-                               "highBeta" : self.__highBeta_records, "lowGamma" : self.__lowGamma_records, "highGamma" : self.__highGamma_records})
-            df.to_csv("meawake.csv", index=False)
+            # df = pd.DataFrame({"attention" : self.__attention_records, "meditation" : self.__meditation_records,"delta" : self.__delta_records, "theta" : self.__theta_records
+            #                    , "lowAlpha" : self.__lowAlpha_records, "highAlpha" : self.__highAlpha_records, "lowBeta" : self.__lowBeta_records,
+            #                    "highBeta" : self.__highBeta_records, "lowGamma" : self.__lowGamma_records, "highGamma" : self.__highGamma_records})
+            # df.to_csv("meawake.csv", index=False)
+            recordingCSV.savetoCSV(self.__attention_records,self.__meditation_records,self.__delta_records,self.__theta_records,self.__lowAlpha_records,
+                                   self.__highAlpha_records,self.__lowBeta_records,self.__highBeta_records,self.__lowGamma_records,self.__highGamma_records
+                                   ,"anything")
 
         except:
             print("[PyNeuro] Stop Packet Parser")
