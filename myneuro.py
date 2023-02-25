@@ -10,7 +10,7 @@ import pandas as pd
 import time
 import recordingCSV
 
-start=time.process_time();
+# start=time.process_time();
 class PyNeuro:
     """NeuroPy libraby, to get data from neurosky mindwave.
     Initialising: object1=PyNeuro() #windows
@@ -111,75 +111,91 @@ class PyNeuro:
 
     def __packetParser(self):
         try:
-            while time.process_time() - start < 1.1:
+            while True:
+                while len(self.__delta_records)!=60:
 
-                line = self.__telnet.read_until(b'\r');
-                if len(line) > 20:
-                    try:
-                        timediff=time.process_time()-start;
-                        print(str(timediff))
-                        raw_str = (str(line).rstrip("\\r'").lstrip("b'"))
-                        data = json.loads(raw_str)
-                        if "status" in data.keys():
-                            if self.__status != data["status"]:
-                                self.__status = data["status"]
-                                if data["status"] == "scanning":
-                                    print("[PyNeuro] Scanning device..")
-                                else:
-                                    print("[PyNeuro] Connection lost, trying to reconnect..")
-                        else:
-                            if "eSense" in data.keys():
-                                print(data["eegPower"])
-                                # print(self.__attention_callbacks)
-                                # print(self.__attention_records)
-                                if data["eSense"]["attention"] + data["eSense"]["meditation"] == 0:
-                                    if self.__status != "fitting":
-                                        self.__status = "fitting"
-                                        print("[PyNeuro] Fitting Device..")
+                    line = self.__telnet.read_until(b'\r');
+                    if len(line) > 20:
+                        try:
+                            # timediff=time.process_time()-start;
+                            # print(str(timediff))
+                            print(len(self.__theta_records))
+                            raw_str = (str(line).rstrip("\\r'").lstrip("b'"))
+                            data = json.loads(raw_str)
+                            if "status" in data.keys():
+                                if self.__status != data["status"]:
+                                    self.__status = data["status"]
+                                    if data["status"] == "scanning":
+                                        print("[PyNeuro] Scanning device..")
+                                    else:
+                                        print("[PyNeuro] Connection lost, trying to reconnect..")
+                            else:
+                                if "eSense" in data.keys():
+                                    print(data["eegPower"])
+                                    # print(self.__attention_callbacks)
+                                    # print(self.__attention_records)
+                                    if data["eSense"]["attention"] + data["eSense"]["meditation"] == 0:
+                                        if self.__status != "fitting":
+                                            self.__status = "fitting"
+                                            print("[PyNeuro] Fitting Device..")
 
-                                else:
-                                    if self.__status != "connected":
-                                        self.__status = "connected"
-                                        print("[PyNeuro] Successfully Connected ..")
-                                    self.attention = data["eSense"]["attention"]
-                                    self.meditation = data["eSense"]["meditation"]
-                                    self.theta = data['eegPower']['theta']
-                                    self.delta = data['eegPower']['delta']
-                                    self.lowAlpha = data['eegPower']['lowAlpha']
-                                    self.highAlpha = data['eegPower']['highAlpha']
-                                    self.lowBeta = data['eegPower']['lowBeta']
-                                    self.highBeta = data['eegPower']['highBeta']
-                                    self.lowGamma = data['eegPower']['lowGamma']
-                                    self.highGamma = data['eegPower']['highGamma']
-                                    self.__theta_records.append(data['eegPower']['theta'])
-                                    self.__delta_records.append(data['eegPower']['delta'])
-                                    self.__highAlpha_records.append(data['eegPower']['highAlpha'])
-                                    self.__lowAlpha_records.append(data['eegPower']['lowAlpha'])
-                                    self.__lowBeta_records.append(data['eegPower']['lowBeta'])
-                                    self.__highBeta_records.append(data['eegPower']['highBeta'])
-                                    self.__lowGamma_records.append(data['eegPower']['lowGamma'])
-                                    self.__highGamma_records.append(data['eegPower']['highGamma'])
-                                    self.__attention_records.append(data["eSense"]["attention"])
-                                    self.__meditation_records.append(data["eSense"]["meditation"])
-                            elif "blinkStrength" in data.keys():
-                                self.blinkStrength = data["blinkStrength"]
-                                self.__blinkStrength_records.append(data["blinkStrength"])
-                    except:
-                        print()
-            # print(self.__attention_records)
-            # print(self.__delta_records)
-            # print(self.__theta_records)
-            # df = pd.DataFrame({"attention" : self.__attention_records, "meditation" : self.__meditation_records,"delta" : self.__delta_records, "theta" : self.__theta_records
-            #                    , "lowAlpha" : self.__lowAlpha_records, "highAlpha" : self.__highAlpha_records, "lowBeta" : self.__lowBeta_records,
-            #                    "highBeta" : self.__highBeta_records, "lowGamma" : self.__lowGamma_records, "highGamma" : self.__highGamma_records})
-            # df.to_csv("meawake.csv", index=False)
-            recordingCSV.savetoCSV(self.__attention_records,self.__meditation_records,self.__delta_records,self.__theta_records,self.__lowAlpha_records,
-                                   self.__highAlpha_records,self.__lowBeta_records,self.__highBeta_records,self.__lowGamma_records,self.__highGamma_records
-                                   ,"anything")
+                                    else:
+                                        if self.__status != "connected":
+                                            self.__status = "connected"
+                                            print("[PyNeuro] Successfully Connected ..")
+                                        # print(len(self.__theta_records))    
+                                        self.attention = data["eSense"]["attention"]
+                                        self.meditation = data["eSense"]["meditation"]
+                                        self.theta = data['eegPower']['theta']
+                                        self.delta = data['eegPower']['delta']
+                                        self.lowAlpha = data['eegPower']['lowAlpha']
+                                        self.highAlpha = data['eegPower']['highAlpha']
+                                        self.lowBeta = data['eegPower']['lowBeta']
+                                        self.highBeta = data['eegPower']['highBeta']
+                                        self.lowGamma = data['eegPower']['lowGamma']
+                                        self.highGamma = data['eegPower']['highGamma']
+                                        self.__theta_records.append(data['eegPower']['theta'])
+                                        self.__delta_records.append(data['eegPower']['delta'])
+                                        self.__highAlpha_records.append(data['eegPower']['highAlpha'])
+                                        self.__lowAlpha_records.append(data['eegPower']['lowAlpha'])
+                                        self.__lowBeta_records.append(data['eegPower']['lowBeta'])
+                                        self.__highBeta_records.append(data['eegPower']['highBeta'])
+                                        self.__lowGamma_records.append(data['eegPower']['lowGamma'])
+                                        self.__highGamma_records.append(data['eegPower']['highGamma'])
+                                        self.__attention_records.append(data["eSense"]["attention"])
+                                        self.__meditation_records.append(data["eSense"]["meditation"])
+                                elif "blinkStrength" in data.keys():
+                                    self.blinkStrength = data["blinkStrength"]
+                                    self.__blinkStrength_records.append(data["blinkStrength"])
+                        except:
+                            print()
+                # print(self.__attention_records)
+                # print(self.__delta_records)
+                # print(self.__theta_records)
+                # df = pd.DataFrame({"attention" : self.__attention_records, "meditation" : self.__meditation_records,"delta" : self.__delta_records, "theta" : self.__theta_records
+                #                    , "lowAlpha" : self.__lowAlpha_records, "highAlpha" : self.__highAlpha_records, "lowBeta" : self.__lowBeta_records,
+                #                    "highBeta" : self.__highBeta_records, "lowGamma" : self.__lowGamma_records, "highGamma" : self.__highGamma_records})
+                # df.to_csv("meawake.csv", index=False)
+                recordingCSV.savetoCSV(self.__attention_records,self.__meditation_records,self.__delta_records,self.__theta_records,self.__lowAlpha_records,
+                                    self.__highAlpha_records,self.__lowBeta_records,self.__highBeta_records,self.__lowGamma_records,self.__highGamma_records
+                                    ,"anything")
+                self.__attention_records = []
+                self.__meditation_records = []
+                self.__blinkStrength_records = []
+                self.__lowAlpha_records= []
+                self.__lowBeta_records= []
+                self.__lowGamma_records= []
+                self.__highAlpha_records= []
+                self.__highBeta_records= []
+                self.__highGamma_records= []
+                self.__theta_records= []
+                self.__delta_records= []
+                
 
         except:
             print("[PyNeuro] Stop Packet Parser")
 
+    
     def set_attention_callback(self, callback):
         """
         Set callback function of attention value
