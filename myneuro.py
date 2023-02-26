@@ -9,6 +9,7 @@ from threading import Thread
 import pandas as pd
 import time
 import recordingCSV
+import classifyAttention
 
 # start=time.process_time();
 class PyNeuro:
@@ -119,7 +120,7 @@ class PyNeuro:
                         try:
                             # timediff=time.process_time()-start;
                             # print(str(timediff))
-                            print(len(self.__theta_records))
+                            # print(len(self.__theta_records))
                             raw_str = (str(line).rstrip("\\r'").lstrip("b'"))
                             data = json.loads(raw_str)
                             if "status" in data.keys():
@@ -143,7 +144,7 @@ class PyNeuro:
                                         if self.__status != "connected":
                                             self.__status = "connected"
                                             print("[PyNeuro] Successfully Connected ..")
-                                        # print(len(self.__theta_records))    
+                                        print(len(self.__theta_records))    
                                         self.attention = data["eSense"]["attention"]
                                         self.meditation = data["eSense"]["meditation"]
                                         self.theta = data['eegPower']['theta']
@@ -176,9 +177,10 @@ class PyNeuro:
                 #                    , "lowAlpha" : self.__lowAlpha_records, "highAlpha" : self.__highAlpha_records, "lowBeta" : self.__lowBeta_records,
                 #                    "highBeta" : self.__highBeta_records, "lowGamma" : self.__lowGamma_records, "highGamma" : self.__highGamma_records})
                 # df.to_csv("meawake.csv", index=False)
+                classAtt=classifyAttention.att(self.__attention_records)
                 recordingCSV.savetoCSV(self.__attention_records,self.__meditation_records,self.__delta_records,self.__theta_records,self.__lowAlpha_records,
                                     self.__highAlpha_records,self.__lowBeta_records,self.__highBeta_records,self.__lowGamma_records,self.__highGamma_records
-                                    ,"anything")
+                                    ,classAtt,"anything")
                 self.__attention_records = []
                 self.__meditation_records = []
                 self.__blinkStrength_records = []
