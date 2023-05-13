@@ -10,6 +10,7 @@ import pandas as pd
 import time
 import recordingCSV
 import classify
+import firestore
 
 # start=time.process_time();
 class PyNeuro:
@@ -174,7 +175,13 @@ class PyNeuro:
                 classification=classify.classfy(self.__lowAlpha_records,self.__highAlpha_records)
                 recordingCSV.savetoCSV(self.__attention_records,self.__meditation_records,self.__delta_records,self.__theta_records,self.__lowAlpha_records,
                                     self.__highAlpha_records,self.__lowBeta_records,self.__highBeta_records,self.__lowGamma_records,self.__highGamma_records
-                                    ,classification,"anything6")
+                                    ,classification,"test")
+                doc_ref = firestore.firestore_client.collection("classifications").document("1")
+                doc_ref.set(
+                    {
+                        "classification": classification,
+                    }
+                )
                 self.__attention_records = []
                 self.__meditation_records = []
                 self.__blinkStrength_records = []
